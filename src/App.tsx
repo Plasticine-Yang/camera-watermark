@@ -1,51 +1,62 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
-import "./App.css";
+import { invoke } from '@tauri-apps/api/core'
+import { open } from '@tauri-apps/plugin-dialog'
+import { useState } from 'react'
+
+import './App.css'
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+  const [debugInfo, setDebugInfo] = useState('')
+  const [fileName, setFileName] = useState<string>('')
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
+  async function selectImageFile() {
+    try {
+      // 选择图片文件
+      const selected = await open({
+        multiple: false,
+        filters: [
+          {
+            name: 'Image',
+            extensions: ['png', 'jpg', 'jpeg'],
+          },
+        ],
+      })
+
+      if (selected) {
+        const filePath = typeof selected === 'string' ? selected : selected[0]
+        setFileName(filePath.split('/').pop() || filePath.split('\\').pop() || 'Unknown')
+
+        // 对于图片文件，我们通常发送文件路径而不是内容
+        // 让Rust后端直接读取文件
+        const result = await invoke('process_image', {
+          filePath,
+        })
+
+        console.log('Image processed:', result)
+        setDebugInfo(`Image processed: ${result}`)
+      }
+    } catch (error) {
+      console.error('Error selecting image:', error)
+      setDebugInfo(`Error: ${error}`)
+    }
   }
 
   return (
     <main className="container">
-      <h1>Welcome to Tauri + React</h1>
+      <p>{debugInfo}</p>
 
       <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <button type="button" onClick={selectImageFile}>
+          Select Image File
+        </button>
       </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
 
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
+      {fileName && (
+        <div>
+          <h3>Selected file: {fileName}</h3>
+        </div>
+      )}
     </main>
-  );
+  )
 }
 
-export default App;
+export default App
