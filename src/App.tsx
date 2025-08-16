@@ -7,6 +7,7 @@ import './App.css'
 function App() {
   const [debugInfo, setDebugInfo] = useState('')
   const [fileName, setFileName] = useState<string>('')
+  const [exifInfo, setExifInfo] = useState<any>(null)
 
   async function selectImageFile() {
     try {
@@ -16,27 +17,26 @@ function App() {
         filters: [
           {
             name: 'Image',
-            extensions: ['png', 'jpg', 'jpeg'],
-          },
-        ],
-      })
+            extensions: ['jpg', 'jpeg', 'png', 'tiff', 'tif', 'raw', 'cr2', 'nef', 'arw']
+          }
+        ]
+      });
 
       if (selected) {
-        const filePath = typeof selected === 'string' ? selected : selected[0]
-        setFileName(filePath.split('/').pop() || filePath.split('\\').pop() || 'Unknown')
-
-        // 对于图片文件，我们通常发送文件路径而不是内容
-        // 让Rust后端直接读取文件
-        const result = await invoke('process_image', {
-          filePath,
-        })
-
-        console.log('Image processed:', result)
-        setDebugInfo(`Image processed: ${result}`)
+        const filePath = typeof selected === 'string' ? selected : selected[0];
+        setFileName(filePath.split('/').pop() || filePath.split('\\').pop() || 'Unknown');
+        
+        // 读取照片的 EXIF 信息
+        const metadataJson = await invoke('parse_exif_info', { filePath });
+        const metadata = JSON.parse(metadataJson as string);
+        setExifInfo(metadata);
+        console.log('Photo metadata:', metadata);
+        
+        setDebugInfo(`Successfully loaded photo metadata for ${fileName}`);
       }
     } catch (error) {
-      console.error('Error selecting image:', error)
-      setDebugInfo(`Error: ${error}`)
+      console.error('Error selecting image:', error);
+      setDebugInfo(`Error: ${error}`);
     }
   }
 
@@ -53,6 +53,27 @@ function App() {
       {fileName && (
         <div>
           <h3>Selected file: {fileName}</h3>
+        </div>
+      )}
+
+      {exifInfo && (
+        <div style={{ marginTop: '20px', textAlign: 'left' }}>
+          <h3>Photo EXIF Information:</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', maxWidth: '600px' }}>
+            <div><strong>Camera:</strong> {exifInfo.camera_model || 'Unknown'}</div>
+            <div><strong>Lens:</strong> {exifInfo.lens_model || 'Unknown'}</div>
+            <div><strong>Focal Length:</strong> {exifInfo.focal_length || 'Unknown'} mm</div>
+            <div><strong>Exposure Time:</strong> {exifInfo.exposure_time || 'Unknown'} s</div>
+            <div><strong>F-Number:</strong> f/{exifInfo.f_number || 'Unknown'}</div>
+            <div><strong>ISO:</strong> {exifInfo.iso || 'Unknown'}</div>
+            <div><strong>Date Taken:</strong> {exifInfo.date_time_original || exifInfo.date_time || 'Unknown'}</div>
+          </div>
+          <details style={{ marginTop: '10px' }}>
+            <summary>View Raw EXIF Data</summary>
+            <pre style={{ maxHeight: '300px', overflow: 'auto', border: '1px solid #ccc', padding: '10px', fontSize: '12px' }}>
+              {JSON.stringify(exifInfo, null, 2)}
+            </pre>
+          </details>
         </div>
       )}
     </main>
