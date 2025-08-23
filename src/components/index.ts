@@ -1,2 +1,2 @@
-export * from './AddWatermarkToImageDemo'
-export * from './ParseExifInfoDemo'
+export * from './ImagePreviewer'
+export * from './ImageSelector'

@@ -98,8 +98,8 @@ fn draw_watermark_image(
     custom_color: Option<[u8; 4]>, // RGBA 颜色，None 表示使用原始颜色
 ) -> Result<(), String> {
     // 读取并解析 SVG
-    let svg_data = fs::read_to_string(logo_path)
-        .map_err(|e| format!("Failed to read SVG file: {}", e))?;
+    let svg_data =
+        fs::read_to_string(logo_path).map_err(|e| format!("Failed to read SVG file: {}", e))?;
 
     // 应用自定义颜色
     let svg_text = if let Some(color) = custom_color {
@@ -129,8 +129,8 @@ fn draw_watermark_image(
     let scaled_height = (svg_height * scale) as u32;
 
     // 渲染 SVG 到像素图
-    let mut pixmap = tiny_skia::Pixmap::new(scaled_width, scaled_height)
-        .ok_or("Failed to create pixmap")?;
+    let mut pixmap =
+        tiny_skia::Pixmap::new(scaled_width, scaled_height).ok_or("Failed to create pixmap")?;
 
     resvg::render(
         &tree,
@@ -197,20 +197,23 @@ fn draw_watermark_image(
 
 fn modify_svg_color(svg_text: &str, color: [u8; 4]) -> String {
     let color_hex = format!("#{:02x}{:02x}{:02x}", color[0], color[1], color[2]);
-    
+
     // 简单的字符串替换，将SVG中的颜色属性替换为指定颜色
     let mut result = svg_text.to_string();
-    
+
     // 替换 fill 属性
     result = result.replace("fill=\"#000000\"", &format!("fill=\"{}\"", color_hex));
     result = result.replace("fill=\"black\"", &format!("fill=\"{}\"", color_hex));
     result = result.replace("fill=\"rgb(0,0,0)\"", &format!("fill=\"{}\"", color_hex));
-    
+
     // 替换 stroke 属性
     result = result.replace("stroke=\"#000000\"", &format!("stroke=\"{}\"", color_hex));
     result = result.replace("stroke=\"black\"", &format!("stroke=\"{}\"", color_hex));
-    result = result.replace("stroke=\"rgb(0,0,0)\"", &format!("stroke=\"{}\"", color_hex));
-    
+    result = result.replace(
+        "stroke=\"rgb(0,0,0)\"",
+        &format!("stroke=\"{}\"", color_hex),
+    );
+
     // 如果SVG中没有指定颜色，添加默认的fill属性
     if !result.contains("fill=\"") {
         // 找到第一个 > 符号前添加 fill 属性
@@ -226,7 +229,7 @@ fn modify_svg_color(svg_text: &str, color: [u8; 4]) -> String {
             }
         }
     }
-    
+
     result
 }
 

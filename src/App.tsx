@@ -1,11 +1,10 @@
 import './App.css'
-import { AddWatermarkToImageDemo, ParseParseExifInfoDemoExifInfoDemo } from './components'
+import { EditImage } from './pages'
 
 function App() {
   return (
     <div>
-      {/* <ParseParseExifInfoDemoExifInfoDemo /> */}
-      <AddWatermarkToImageDemo />
+      <EditImage />
     </div>
   )
 }
