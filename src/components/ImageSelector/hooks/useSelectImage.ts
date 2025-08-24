@@ -2,6 +2,8 @@ import { open } from '@tauri-apps/plugin-dialog'
 import { useCallback } from 'react'
 
 import { ImageItem } from '@/types'
+import { readFile } from '@tauri-apps/plugin-fs'
+import { readFileToObjectUrl } from '@/helpers'
 
 interface UseSelectImageProps {
   onAppendImageItemList: (imageItemList: ImageItem[]) => void
@@ -11,7 +13,7 @@ export function useSelectImage(props: UseSelectImageProps) {
   const { onAppendImageItemList } = props
 
   const handleSelectImage = useCallback(async () => {
-    const selectedImageFilePath = await open({
+    const selectedImageFilePathList = await open({
       multiple: true,
       filters: [
         {
@@ -21,11 +23,22 @@ export function useSelectImage(props: UseSelectImageProps) {
       ],
     })
 
-    if (selectedImageFilePath === null) {
+    if (selectedImageFilePathList === null) {
       return
     }
 
-    onAppendImageItemList(selectedImageFilePath.map((filePath) => ({ filePath })))
+    const selectedImageItemList = await Promise.all(
+      selectedImageFilePathList.map(async (filePath) => {
+        const objectUrl = await readFileToObjectUrl(filePath)
+
+        return {
+          filePath,
+          objectUrl,
+        }
+      }),
+    )
+
+    onAppendImageItemList(selectedImageItemList)
   }, [])
 
   return { handleSelectImage }

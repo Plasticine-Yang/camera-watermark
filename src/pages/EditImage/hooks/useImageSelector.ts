@@ -6,10 +6,10 @@ import { useCameraWatermarkStore } from '@/store'
 
 export function useImageSelector() {
   const selectedImageItemList = useCameraWatermarkStore(useShallow((store) => store.selectedImageItemList))
+  const activeImageItem = useCameraWatermarkStore(useShallow((store) => store.activeImageItem))
 
-  const { activeImageItem, setActiveImageItem, appendImageItemList, deleteImageItem } = useCameraWatermarkStore(
+  const { setActiveImageItem, appendImageItemList, deleteImageItem } = useCameraWatermarkStore(
     useShallow((state) => ({
-      activeImageItem: state.activeImageItem,
       appendImageItemList: state.appendImageItemList,
       deleteImageItem: state.deleteImageItem,
       setActiveImageItem: state.setActiveImageItem,

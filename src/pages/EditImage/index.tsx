@@ -1,9 +1,10 @@
+import { AppBar, Box, Button, Container, Toolbar, Typography } from '@mui/material'
 import { memo, type FC } from 'react'
 
 import { ImagePreviewer, ImageSelector } from '@/components'
+import { useCurrentBreakpoint } from '@/hooks'
 
 import { useImageSelector } from './hooks'
-import styles from './style.module.scss'
 
 interface EditImageProps {}
 
@@ -16,17 +17,33 @@ export const EditImage: FC<EditImageProps> = memo(() => {
     handleDeleteImageItem,
   } = useImageSelector()
 
-  return (
-    <div className={styles['edit-image']}>
-      <ImagePreviewer />
+  const { currentBreakPoint } = useCurrentBreakpoint()
 
-      <ImageSelector
-        activeImageItem={activeImageItem}
-        selectedImageItemList={selectedImageItemList}
-        onActiveImageItemChange={handleActiveImageItemChange}
-        onAppendImageItemList={handleAppendImageItemList}
-        onDeleteImageItem={handleDeleteImageItem}
-      />
-    </div>
+  return (
+    <Container maxWidth={currentBreakPoint}>
+      <AppBar position="sticky">
+        <Toolbar>
+          <Typography variant="h6" component="div" color="textPrimary" sx={{ flexGrow: 1 }}>
+            Camera Watermark
+          </Typography>
+
+          <Button color="inherit">导出</Button>
+        </Toolbar>
+      </AppBar>
+
+      <Box sx={{ marginTop: 10 }}>
+        <ImagePreviewer imageItem={activeImageItem} />
+      </Box>
+
+      <Box sx={{ marginTop: 10 }}>
+        <ImageSelector
+          activeImageItem={activeImageItem}
+          selectedImageItemList={selectedImageItemList}
+          onActiveImageItemChange={handleActiveImageItemChange}
+          onAppendImageItemList={handleAppendImageItemList}
+          onDeleteImageItem={handleDeleteImageItem}
+        />
+      </Box>
+    </Container>
   )
 })

@@ -1,0 +1,28 @@
+.image-previewer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+
+  &__empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+  }
+
+  &__canvas {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    max-width: 100%;
+    height: auto;
+  }
+
+  &__image_description {
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+  }
+}
