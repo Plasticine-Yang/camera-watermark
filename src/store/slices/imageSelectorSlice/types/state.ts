@@ -1,4 +1,6 @@
+import { ImageItem } from '@/types'
+
 export interface ImageSelectorSliceState {
-  selectedImageFilePathList: string[]
-  activeImageFilePath: string
+  selectedImageItemList: ImageItem[]
+  activeImageItem: ImageItem | null
 }

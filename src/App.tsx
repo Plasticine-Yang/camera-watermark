@@ -1,11 +1,15 @@
-import './App.css'
+import { ThemeProvider } from '@mui/material'
+
+import { theme } from './mui'
 import { EditImage } from './pages'
 
 function App() {
   return (
-    <div>
-      <EditImage />
-    </div>
+    <ThemeProvider theme={theme}>
+      <div>
+        <EditImage />
+      </div>
+    </ThemeProvider>
   )
 }
 

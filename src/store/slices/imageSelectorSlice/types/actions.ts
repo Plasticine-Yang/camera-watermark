@@ -1,5 +1,7 @@
+import { ImageItem } from '@/types'
+
 export interface ImageSelectorSliceActions {
-  setActiveImageFilePath: (filePath: string) => void
-  deleteImageFilePath: (filePath: string) => void
-  appendImageFilePath: (filePath: string) => void
+  setActiveImageItem: (imageItem: ImageItem) => void
+  deleteImageItem: (imageItem: ImageItem) => void
+  appendImageItemList: (imageItemList: ImageItem[]) => void
 }

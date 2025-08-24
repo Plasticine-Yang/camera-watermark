@@ -1,1 +1,1 @@
-export * from './ImageItem'
+export * from './ImageItemRender'

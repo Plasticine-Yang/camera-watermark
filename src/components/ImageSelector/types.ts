@@ -1,7 +1,9 @@
+import { ImageItem } from '@/types'
+
 export interface ImageSelectorProps {
-  activeImageFilePath: string
-  selectedImageFilePathList: string[]
-  onActiveImageFilePathChange: (activeImageFilePath: string) => void
-  onAppendImageFilePath: (imageFilePath: string) => void
-  onDeleteImageFilePath: (imageFilePath: string) => void
+  activeImageItem: ImageItem | null
+  selectedImageItemList: ImageItem[]
+  onActiveImageItemChange: (imageItem: ImageItem) => void
+  onAppendImageItemList: (imageItemList: ImageItem[]) => void
+  onDeleteImageItem: (imageItem: ImageItem) => void
 }

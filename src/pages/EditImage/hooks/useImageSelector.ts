@@ -4,45 +4,44 @@ import { useShallow } from 'zustand/shallow'
 import { ImageSelectorProps } from '@/components'
 import { useCameraWatermarkStore } from '@/store'
 
-export function useImageSelectorProps() {
-  const selectedImageFilePathList = useCameraWatermarkStore(useShallow((state) => state.selectedImageFilePathList))
+export function useImageSelector() {
+  const selectedImageItemList = useCameraWatermarkStore(useShallow((store) => store.selectedImageItemList))
 
-  const { activeImageFilePath, setActiveImageFilePath, appendImageFilePath, deleteImageFilePath } =
-    useCameraWatermarkStore(
-      useShallow((state) => ({
-        activeImageFilePath: state.activeImageFilePath,
-        appendImageFilePath: state.appendImageFilePath,
-        deleteImageFilePath: state.deleteImageFilePath,
-        setActiveImageFilePath: state.setActiveImageFilePath,
-      })),
-    )
-
-  const handleActiveImageFilePathChange = useCallback<ImageSelectorProps['onActiveImageFilePathChange']>(
-    (newActiveImageFilePath) => {
-      setActiveImageFilePath(newActiveImageFilePath)
-    },
-    [setActiveImageFilePath],
+  const { activeImageItem, setActiveImageItem, appendImageItemList, deleteImageItem } = useCameraWatermarkStore(
+    useShallow((state) => ({
+      activeImageItem: state.activeImageItem,
+      appendImageItemList: state.appendImageItemList,
+      deleteImageItem: state.deleteImageItem,
+      setActiveImageItem: state.setActiveImageItem,
+    })),
   )
 
-  const handleAppendImageFilePath = useCallback<ImageSelectorProps['onAppendImageFilePath']>(
-    (imageFilePath) => {
-      appendImageFilePath(imageFilePath)
+  const handleActiveImageItemChange = useCallback<ImageSelectorProps['onActiveImageItemChange']>(
+    (imageItem) => {
+      setActiveImageItem(imageItem)
     },
-    [appendImageFilePath],
+    [setActiveImageItem],
   )
 
-  const handleDeleteImageFilePath = useCallback<ImageSelectorProps['onDeleteImageFilePath']>(
-    (imageFilePath) => {
-      deleteImageFilePath(imageFilePath)
+  const handleAppendImageItemList = useCallback<ImageSelectorProps['onAppendImageItemList']>(
+    (imageItemList) => {
+      appendImageItemList(imageItemList)
     },
-    [deleteImageFilePath],
+    [appendImageItemList],
+  )
+
+  const handleDeleteImageItem = useCallback<ImageSelectorProps['onDeleteImageItem']>(
+    (imageItem) => {
+      deleteImageItem(imageItem)
+    },
+    [deleteImageItem],
   )
 
   return {
-    activeImageFilePath,
-    selectedImageFilePathList,
-    handleActiveImageFilePathChange,
-    handleAppendImageFilePath,
-    handleDeleteImageFilePath,
+    activeImageItem,
+    selectedImageItemList,
+    handleActiveImageItemChange,
+    handleAppendImageItemList,
+    handleDeleteImageItem,
   }
 }
